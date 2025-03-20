@@ -7,7 +7,6 @@ export interface InstagramPost {
   postUrl?: string;
 }
 
-
 export interface InstagramConfig {
   username: string;
   accessToken?: string;
