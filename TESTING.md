@@ -182,50 +182,50 @@ Location: `src/__tests__/controllers/common.controller.test.ts`
 
 #### Integrated Workflow Tests
 
-- **Should fetch Instagram post, summarize, and post to Twitter successfully**
+- **Should fetch Instagram post, summarize caption, and post to Twitter without image**
   - Test setup:
     - Mock Instagram service to return successful response with caption and image URL
     - Mock LLM service to return successful summarization
     - Mock Twitter service to return successful tweet posting
-  - Request: `POST /instagram-to-twitter` with `{"imageUpload": false}`
+  - Request: `POST /api/instagram-to-twitter` with `{"imageUpload": false}`
   - Expected outcome: 200 status code with success response containing Instagram data and Twitter post ID
 
-- **Should fetch Instagram post, summarize, and post to Twitter with media successfully**
+- **Should fetch Instagram post, summarize caption, and post to Twitter with image**
   - Test setup:
     - Mock Instagram service to return successful response with caption and image URL
     - Mock LLM service to return successful summarization
     - Mock Twitter service to return successful tweet with media posting
-  - Request: `POST /instagram-to-twitter` with `{"imageUpload": true}`
+  - Request: `POST /api/instagram-to-twitter` with `{"imageUpload": true}`
   - Expected outcome: 200 status code with success response containing Instagram data and Twitter post ID
 
-- **Should return error when Instagram service fails**
+- **Should return 404 when Instagram post fetch fails**
   - Test setup:
     - Mock Instagram service to return error response
-  - Request: `POST /instagram-to-twitter`
+  - Request: `POST /api/instagram-to-twitter`
   - Expected outcome: 404 status code with error response
 
-- **Should return error when Twitter service fails**
+- **Should return 400 when Twitter post fails**
   - Test setup:
     - Mock Instagram service to return successful response with caption and image URL
     - Mock LLM service to return successful summarization
     - Mock Twitter service to return error response
-  - Request: `POST /instagram-to-twitter`
+  - Request: `POST /api/instagram-to-twitter`
   - Expected outcome: 400 status code with error response containing Instagram data and summary
 
-- **Should handle unexpected errors gracefully**
+- **Should return 500 when an unexpected error occurs**
   - Test setup:
     - Mock Instagram service to throw an unexpected error
-  - Request: `POST /instagram-to-twitter`
+  - Request: `POST /api/instagram-to-twitter`
   - Expected outcome: 500 status code with error response
 
 ### Instagram Controller Tests
 
 Location: `src/__tests__/controllers/instagram.controller.test.ts`
 
-#### Get Latest Post Tests
+#### GET /api/instagram/latest Tests
 
 - **Should return 200 and latest post data when successful**
-  - Test setup: Mock Instagram service to return successful response
+  - Test setup: Mock Instagram service to return successful response with post data
   - Request: `GET /api/instagram/latest`
   - Expected outcome: 200 status code with post data
 
@@ -239,7 +239,7 @@ Location: `src/__tests__/controllers/instagram.controller.test.ts`
   - Request: `GET /api/instagram/latest`
   - Expected outcome: 500 status code with error message
 
-#### Update Username Tests
+#### POST /api/instagram/username Tests
 
 - **Should return 200 when username is updated successfully**
   - Test setup: Mock Instagram service's setUsername method
@@ -251,9 +251,31 @@ Location: `src/__tests__/controllers/instagram.controller.test.ts`
   - Request: `POST /api/instagram/username` with empty body
   - Expected outcome: 400 status code with validation error
 
+- **Should return 500 when an unexpected error occurs**
+  - Test setup: Mock Instagram service's setUsername method to throw an error
+  - Request: `POST /api/instagram/username` with username
+  - Expected outcome: 500 status code with error message
+
 ### Twitter Controller Tests
 
 Location: `src/__tests__/controllers/twitter.controller.test.ts`
+
+#### Summarize Caption Tests
+
+- **Should return 200 and summarized caption when successful**
+  - Test setup: Mock LLM service to return successful summarization
+  - Request: `POST /api/summarize` with Instagram caption
+  - Expected outcome: 200 status code with summarized text
+
+- **Should return 400 when instagramCaption is missing**
+  - Test setup: No mocking required
+  - Request: `POST /api/summarize` with empty body
+  - Expected outcome: 400 status code with validation error
+
+- **Should return 500 when an error occurs during summarization**
+  - Test setup: Mock LLM service to throw an error
+  - Request: `POST /api/summarize` with Instagram caption
+  - Expected outcome: 500 status code with error message
 
 #### Post Tweet Tests
 
@@ -264,29 +286,22 @@ Location: `src/__tests__/controllers/twitter.controller.test.ts`
   - Request: `POST /api/tweet` with Instagram caption
   - Expected outcome: 200 status code with tweet ID
 
-- **Should return 400 when Instagram caption is missing**
+- **Should return 400 when instagramCaption is missing**
   - Test setup: No mocking required
   - Request: `POST /api/tweet` with empty body
   - Expected outcome: 400 status code with validation error
 
-- **Should return 400 when Twitter service fails**
+- **Should return 400 when tweet posting fails**
   - Test setup:
     - Mock LLM service to return successful summarization
     - Mock Twitter service to return error response
   - Request: `POST /api/tweet` with Instagram caption
   - Expected outcome: 400 status code with error message
 
-#### Summarize Caption Tests
-
-- **Should return 200 when caption is summarized successfully**
-  - Test setup: Mock LLM service to return successful summarization
-  - Request: `POST /api/summarize` with Instagram caption
-  - Expected outcome: 200 status code with summarized text
-
-- **Should return 400 when Instagram caption is missing**
-  - Test setup: No mocking required
-  - Request: `POST /api/summarize` with empty body
-  - Expected outcome: 400 status code with validation error
+- **Should return 500 when an unexpected error occurs**
+  - Test setup: Mock LLM service to throw an error
+  - Request: `POST /api/tweet` with Instagram caption
+  - Expected outcome: 500 status code with error message
 
 #### Post Tweet with Media Tests
 
@@ -297,10 +312,22 @@ Location: `src/__tests__/controllers/twitter.controller.test.ts`
   - Request: `POST /api/tweet-with-media` with Instagram caption and image URL
   - Expected outcome: 200 status code with tweet ID
 
-- **Should return 400 when Instagram caption or image URL is missing**
+- **Should return 400 when required fields are missing**
   - Test setup: No mocking required
   - Request: `POST /api/tweet-with-media` with incomplete body
   - Expected outcome: 400 status code with validation error
+
+- **Should return 400 when tweet with media posting fails**
+  - Test setup:
+    - Mock LLM service to return successful summarization
+    - Mock Twitter service to return error response
+  - Request: `POST /api/tweet-with-media` with Instagram caption and image URL
+  - Expected outcome: 400 status code with error message
+
+- **Should return 500 when an unexpected error occurs**
+  - Test setup: Mock LLM service to throw an error
+  - Request: `POST /api/tweet-with-media` with Instagram caption and image URL
+  - Expected outcome: 500 status code with error message
 
 ## Mocking Strategy
 
