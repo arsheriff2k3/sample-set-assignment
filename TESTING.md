@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document provides detailed information about the test suite for the Instagram Data Fetching and Twitter Integration Tool. It covers unit tests and integration tests for all major components of the application.
+This document provides detailed information about the test suite for the Instagram Data Fetching and Twitter Integration Tool. It covers unit tests and integration tests for the controller components of the application.
 
 ## Test Environment Setup
 
@@ -68,113 +68,6 @@ src/
 ```
 
 ## Test Cases
-
-### Error Handling Utilities Tests
-
-Location: `src/__tests__/utils/errorHandler.test.ts`
-
-#### AsyncHandler Tests
-
-- **Should handle successful async operations**
-  - Expected outcome: Function executes successfully and returns expected result
-
-- **Should catch and format errors from async operations**
-  - Expected outcome: Errors are caught, logged, and formatted into standardized response
-
-- **Should handle ApiError with custom status codes**
-  - Expected outcome: Response includes the correct status code from the ApiError
-
-#### Validation Error Handler Tests
-
-- **Should return properly formatted validation errors**
-  - Expected outcome: Returns 400 status code with standardized error format
-
-- **Should include custom status code when provided**
-  - Expected outcome: Returns the provided status code with standardized error format
-
-### Instagram Service Tests
-
-Location: `src/__tests__/services/instagram.service.test.ts`
-
-#### Constructor Tests
-
-- **Should initialize with default username if not provided**
-  - Expected outcome: Service initializes with 'bbcnews' as the default username
-
-- **Should initialize with provided username**
-  - Expected outcome: Service initializes with the provided username
-
-- **Should initialize with access token from environment if not provided**
-  - Expected outcome: Service initializes with the access token from environment variables
-
-#### Username Setting Tests
-
-- **Should update the username**
-  - Expected outcome: Username is updated to the new value
-
-#### Data Retrieval Tests
-
-- **Should return data from API when API call is successful**
-  - Expected outcome: Returns formatted Instagram post data from the API
-
-- **Should return data from Puppeteer when API call fails**
-  - Expected outcome: Returns formatted Instagram post data from Puppeteer scraping
-
-- **Should return data from Cheerio when both API and Puppeteer fail**
-  - Expected outcome: Returns formatted Instagram post data from Cheerio HTML parsing
-
-- **Should return error when all methods fail**
-  - Expected outcome: Returns error response
-
-### LLM Service Tests
-
-Location: `src/__tests__/services/llm.service.test.ts`
-
-#### Text Summarization Tests
-
-- **Should summarize text successfully**
-  - Expected outcome: Returns summarized text from the LLM
-
-- **Should truncate summary to maxLength if specified**
-  - Expected outcome: Returns summarized text truncated to the specified maximum length
-
-- **Should throw an error when API call fails**
-  - Expected outcome: Throws an error with appropriate message
-
-- **Should throw an error when GEMINI_API_KEY is not defined**
-  - Expected outcome: Throws an error about missing API key
-
-- **Should handle long texts appropriately**
-  - Expected outcome: Successfully summarizes long texts within the character limit
-
-### Twitter Service Tests
-
-Location: `src/__tests__/services/twitter.service.test.ts`
-
-#### Tweet Posting Tests
-
-- **Should post tweet successfully**
-  - Expected outcome: Returns success response with tweet ID
-
-- **Should return error when tweet exceeds character limit**
-  - Expected outcome: Returns error response with appropriate message
-
-- **Should return error when Twitter API fails**
-  - Expected outcome: Returns error response
-
-#### Tweet with Media Tests
-
-- **Should post tweet with media successfully**
-  - Expected outcome: Returns success response with tweet ID
-
-- **Should download and process image correctly**
-  - Expected outcome: Image is downloaded, processed, and uploaded to Twitter
-
-- **Should clean up temporary image files after posting**
-  - Expected outcome: Temporary image files are deleted after successful or failed posting
-
-- **Should return error when media upload fails**
-  - Expected outcome: Returns error response
 
 ### Common Controller Tests
 
@@ -335,16 +228,12 @@ The test suite uses Jest's mocking capabilities to isolate components during tes
 
 - **Service Mocks**: Controllers are tested with mocked service responses
 - **External API Mocks**: Services that call external APIs (Twitter, Instagram, Google Gemini) use mocked responses
-- **File System Mocks**: Operations that interact with the file system are mocked
 
 ## Test Coverage
 
-The test suite aims for high coverage across all components:
+The test suite aims for high coverage across all controller components:
 
 - **Controllers**: 95%+ coverage
-- **Services**: 90%+ coverage
-- **Utilities**: 95%+ coverage
-- **Error Handling**: 100% coverage
 
 To view detailed coverage reports:
 
@@ -370,9 +259,8 @@ Tests are automatically run in the CI/CD pipeline on each pull request and befor
 
 ### Common Issues
 
-1. **Timeouts**: Tests involving Puppeteer may time out. Increase the timeout in `jest.config.js` if needed.
-2. **Environment Variables**: Ensure all required environment variables are set in `jest.setup.js`.
-3. **Mocking Issues**: If tests fail due to mocking issues, check that the mock implementation matches the expected interface.
+1. **Environment Variables**: Ensure all required environment variables are set in `jest.setup.js`.
+2. **Mocking Issues**: If tests fail due to mocking issues, check that the mock implementation matches the expected interface.
 
 ### Debugging Tests
 
