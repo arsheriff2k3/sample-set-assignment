@@ -9,6 +9,7 @@ import {
 } from '../interfaces/instagram.interface';
 import dotenv from 'dotenv';
 import * as fs from 'fs';
+import { getChromePath } from 'chrome-launcher';
 
 dotenv.config();
 
@@ -99,19 +100,20 @@ class InstagramService {
     try {
       logger.info(`Attempting to fetch Instagram data via Puppeteer for ${this.config.username}`);
 
+
       browser = await puppeteer.launch({
         headless: 'new',
+        executablePath: getChromePath(),
         args: [
           '--no-sandbox',
           '--disable-setuid-sandbox',
           '--disable-features=IsolateOrigins,site-per-process',
           '--disable-site-isolation-trials',
           '--disable-web-security',
-          '--disable-features=IsolateOrigins',
-          '--disable-site-isolation-trials',
           '--window-size=1920,1080',
         ],
       });
+
 
       const page = await browser.newPage();
 
